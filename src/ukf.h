@@ -55,6 +55,9 @@ public:
   ///* Radar measurement noise standard deviation radius change in m/s
   double std_radrd_ ;
 
+  // NIS for radar and laser
+  double NIS_laser_, NIS_radar_;
+
   ///* Weights of sigma points
   VectorXd weights_;
 
@@ -83,7 +86,7 @@ public:
    * @param meas_package The latest measurement data of either radar or laser
    */
   void ProcessMeasurement(MeasurementPackage meas_package);
-
+  void Init(MeasurementPackage meas_package);
   /**
    * Prediction Predicts sigma points, the state, and the state covariance
    * matrix
