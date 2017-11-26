@@ -11,34 +11,29 @@ Tools::~Tools() {}
 
 VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
                               const vector<VectorXd> &ground_truth) {
+  /**
+  TODO:
+    * Calculate the RMSE here.
+  */
   VectorXd rmse(4);
   rmse << 0, 0, 0, 0;
+  // Check validity
+  if (estimations.size() <= 0) {
+    std::cout << "CalculateRMSE - Division by zero ERROR" << std::endl;
+    return rmse;
+  } else if (estimations.size() != ground_truth.size()) {
+    std::cout << "CalculateRMSE - Estimation size and ground_truth size differ ERROR" << std::endl;
+    return rmse;
+  }
 
-  // check the validity of the following inputs:
-  //  * the estimation vector size should not be zero
-  //  * the estimation vector size should equal ground truth vector size
-  if (estimations.empty() || estimations.size() != ground_truth.size()) return rmse;
-
-  // accumulate squared residuals
-  // todo: see if this loop works are expected
-  // its implemented differently compared to udacity
+  // Accumulate squared residuals
   for (unsigned int i = 0; i < estimations.size(); ++i) {
-    for (unsigned int j = 0; j < rmse.size(); j++) {
-      auto residual = estimations[i][j] - ground_truth[i][j];
-      rmse[j] += pow(residual, 2);
-    }
+    VectorXd residual = estimations[i] - ground_truth[i];
+    residual = residual.array() * residual.array();
+    rmse += residual;
   }
 
-  // root mean residuals
-  for (int i = 0; i < rmse.size(); i++) {
-
-    // calculate the mean
-    rmse[i] /= estimations.size();
-
-    // calculate the squared root
-    rmse[i] = sqrt(rmse[i]);
-  }
-
-  //return the result
+  rmse = rmse / estimations.size();
+  rmse = rmse.array().sqrt();
   return rmse;
 }

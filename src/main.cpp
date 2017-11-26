@@ -74,7 +74,7 @@ int main() {
             iss >> timestamp;
             meas_package.timestamp_ = timestamp;
           }
-          // radar measurement
+            // radar measurement
           else if (sensor_type.compare("R") == 0) {
             meas_package.sensor_type_ = MeasurementPackage::RADAR;
             meas_package.raw_measurements_ = VectorXd(3);
@@ -108,12 +108,12 @@ int main() {
           // Push the current estimated x,y position from the Kalman filter's state vector
           VectorXd estimate(4);
 
-          double px   = ukf.x_(0);
-          double py   = ukf.x_(1);
-          double v    = ukf.x_(2);
-          double yaw  = ukf.x_(3);
-          double v1   = cos(yaw) * v;
-          double v2   = sin(yaw) * v;
+          double px = ukf.x_(0);
+          double py = ukf.x_(1);
+          double v = ukf.x_(2);
+          double yaw = ukf.x_(3);
+          double v1 = cos(yaw) * v;
+          double v2 = sin(yaw) * v;
 
           estimate << px, py, v1, v2;
           estimations.push_back(estimate);
@@ -128,7 +128,6 @@ int main() {
           msgJson["rmse_vx"] = RMSE(2);
           msgJson["rmse_vy"] = RMSE(3);
           auto msg = "42[\"estimate_marker\"," + msgJson.dump() + "]";
-          // std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
 
         }
