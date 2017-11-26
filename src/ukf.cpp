@@ -55,9 +55,9 @@ UKF::UKF() {
    **************/
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 0.2; // was initially 30
+  std_a_ = 0.8; // was initially 30
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 0.2; // was initially 30
+  std_yawdd_ = 0.6; // was initially 30
 
   /**************
    * MEASUREMENT NOISES STD
@@ -101,6 +101,13 @@ UKF::UKF() {
   // reset time
   time_us_ = 0;
   EPS_ = 0.0001;
+
+  // clear NIS csv files
+  ofstream NIS_files;
+  NIS_files.open("../NIS_Radar.csv", ofstream::out | ofstream::trunc);
+  NIS_files.close();
+  NIS_files.open("../NIS_Laser.csv", ofstream::out | ofstream::trunc);
+  NIS_files.close();
 }
 
 UKF::~UKF() {}
@@ -165,8 +172,8 @@ void UKF::Init(MeasurementPackage meas_pack) {
           0,                    // yaw
           0;                    // yaw_d
 
-    P_.fill(0.0);
     // state covariance matrix
+    P_.fill(0.0);
     P_(0, 0) = pow(std_laspx_, 2);
     P_(1, 1) = pow(std_laspy_, 2);
     P_(2, 2) = 1; // std_v
@@ -174,21 +181,21 @@ void UKF::Init(MeasurementPackage meas_pack) {
     P_(4, 4) = 1; // std_yho_dot
   }
 
-    // Radar measurements
-    // when sensor type is radar and use_radar is true
-    // radar -> rho, psi, rho_dot
+  // Radar measurements
+  // when sensor type is radar and use_radar is true
+  // radar -> rho, psi, rho_dot
   else if (meas_pack.sensor_type_ == MeasurementPackage::RADAR && use_radar_) {
     // Convert radar from polar to cartesian coordinates and initialize state.
     const auto rho = meas_pack.raw_measurements_[0],
-        phi = meas_pack.raw_measurements_[1],
-        rho_dot = meas_pack.raw_measurements_[2];
+               phi = meas_pack.raw_measurements_[1],
+               rho_dot = meas_pack.raw_measurements_[2];
 
     const auto px = rho * cos(phi),
-        py = rho * sin(phi),
-        vx = rho_dot * cos(phi),
-        vy = rho_dot * sin(phi);
+               py = rho * sin(phi),
+               vx = rho_dot * cos(phi),
+               vy = rho_dot * sin(phi);
 
-    x_ << px,                                     // px
+    x_ << px,                                   // px
         py,                                     // py
         sqrt(pow(vx, 2) + pow(vy, 2)),          // v
         0,                                      // yaw
@@ -196,11 +203,11 @@ void UKF::Init(MeasurementPackage meas_pack) {
 
     P_.fill(0.0);
     // state covariance matrix
-    P_(0, 0) = pow(std_radr_, 2);
-    P_(1, 1) = pow(std_radr_, 2);
-    P_(2, 2) = 1;                   // std_v
-    P_(3, 3) = 1; // std_yho
-    P_(4, 4) = 1;  // std_yho_dot
+    P_(0, 0) = 0.3, //pow(std_radr_, 2);
+    P_(1, 1) = 0.3, //pow(std_radr_, 2);
+    P_(2, 2) = 1.;                   // std_v
+    P_(3, 3) = 1.; // std_yho
+    P_(4, 4) = 1.;  // std_yho_dot
   }
 
   // Save the initial timestamp for dt calculation
@@ -470,12 +477,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
            vx   = v * cos(yaw),
            vy   = v * sin(yaw);
 
-    if (px < EPS_) px = EPS_;
-    if (py < EPS_) py = EPS_;
-
     double rho = sqrt(pow(px, 2) + pow(py, 2));
-    // avoid division by zero
-    rho = max(fabs(rho), EPS_);
     double phi = atan2(py, px);
     double rho_dot = (px * vx + py * vy) / rho;
 
