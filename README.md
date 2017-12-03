@@ -14,7 +14,7 @@
 
 ## Introduction:
 
-Extended Kalman Filter algorithm is used to predict is the position (px, py) and velocity (vx, vy) based on Laser and Radar data provided by car (simulator).
+Unscented Kalman Filter algorithm is used to predict is the position (px, py) and velocity (vx, vy) based on Laser and Radar data provided by car (simulator).
 
 The accuracy of the prediction is calculated using RMSE method.
 
@@ -91,3 +91,7 @@ Following table summarizes the purpose of each file:
 ||Caculate NIS for Laser `NIS_laser` and Radar `NIS_radar`|
 |**tools.cpp**|  |
 | 				| Implement `CalculateRMSE` to find RMSE values | 
+
+## Results:
+
+![Results](result-ukf.gif)
