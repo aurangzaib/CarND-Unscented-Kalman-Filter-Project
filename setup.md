@@ -1,4 +1,4 @@
-# Unscented Kalman Filter Project Setup Guide
+# Unscented Kalman Filter (UKF) Project Setup Guide
 
 This project involves the Term 2 Simulator which can be downloaded [here](https://github.com/udacity/self-driving-car-sim/releases)
 
