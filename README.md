@@ -107,6 +107,6 @@ Following points sum up the results and conclusion for UKF:
 - In case of UKF, the covariance matrix remains realistic by performing consistency check using NIS
 
 
-The video below shows results of UKF:
+The video (GIF) below shows results of UKF:
 
 ![Results](result-ukf.gif)
